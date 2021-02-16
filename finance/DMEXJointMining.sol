@@ -198,15 +198,24 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
         return _userPool.globalMask.sub(_userPool.userMask[msg.sender]).mul(_userPool.userHolders[msg.sender]).div(GLOBAL_DECIMAL).add(_userPool.userRecvs[msg.sender]);
     }
     
-    function vendorWithdraw(bytes32 _pid) external {
+    function vendorWithdrawAll(bytes32 _pid) public {
+        require(_vendorPools[_pid].global.active, "pool not exists");
+        address afil = _vendorPools[_pid].global.afil;
+        uint256 afilAmount = DFinanceToken(afil).balanceOf(msg.sender);
+        vendorWithdraw(_pid,afilAmount);
+    }
+    
+    function vendorWithdraw(bytes32 _pid, uint256 _amount) public {
         require(_vendorPools[_pid].global.active, "pool not exists");
         uint256 canRecvAmount = _calcVendorCanRecvs(_pid);
         address afil = _vendorPools[_pid].global.afil;
         uint256 afilAmount = DFinanceToken(afil).balanceOf(msg.sender);
-        if (canRecvAmount > 0 && afilAmount > 0) {
+        require(_amount <= afilAmount, "Insufficient Balance");
+         
+        if (canRecvAmount > 0 && _amount > 0) {
             uint256 withdrawAmount;
-            if (canRecvAmount >= afilAmount) {
-                withdrawAmount = afilAmount;
+            if (canRecvAmount >= _amount) {
+                withdrawAmount = _amount;
             } else {
                 withdrawAmount = canRecvAmount;
             }

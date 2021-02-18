@@ -13,4 +13,6 @@ DMEXJointMiningProxy  : https://scan.hecochain.com/address/0xAc5225eEad90c37165E
 PETimeLock  : https://scan.hecochain.com/address/0x437D6B5d91A4fdE1959213Ac14168E2495609a7A
 TeamTimeLock  : https://scan.hecochain.com/address/0xceb4273ace3685231f6aEc33e93C52b4d56848c0
 DMCToken  : https://scan.hecochain.com/address/0x854Bb58fDDa85F20b5aB20B20d888f0554c02560
+MasterMining： https://scan.hecochain.com/address/0x5a32B8DDE0D9D67373F6Ba03835273E6FDB9029d
+MasterMiningProxy：  https://scan.hecochain.com/address/0x9CBf674532e0873B439619B3ca9C8E32688E5a99
 ```

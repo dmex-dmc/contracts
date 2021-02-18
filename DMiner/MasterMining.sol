@@ -1,12 +1,9 @@
 //SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity ^0.6.12;
 
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC20/IERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC20/SafeERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/utils/EnumerableSet.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/math/SafeMath.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/access/Ownable.sol";
+
+import "./SafeERC20.sol";
 import "./IMasterMiningStorage.sol";
 import "./Governance.sol";
 
@@ -328,6 +325,17 @@ contract MasterMining is IMasterMiningStorage, Governance {
             }
         }
         return amount;
+    }
+    
+    //Get the total alloc point of some pools
+    function sumPoolAllocPoint(uint256[] memory _pids) public view returns (uint256 _subAllocPoint, uint256 _totalAllocPoint){
+        uint256 length = _pids.length;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            PoolInfo storage pool = poolInfo[_pids[pid]];
+            _subAllocPoint = _subAllocPoint.add(pool.allocPoint);
+        }
+        
+        return (_subAllocPoint, totalAllocPoint);
     }
 
 }

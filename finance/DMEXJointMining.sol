@@ -47,7 +47,7 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
     }
     
     function updateWithdrawFees(uint256 _feeRate, uint256 _plateformRate) onlyGovernance public {
-        require(_feeRate.add(_plateformRate) < 1000, "Error Fees");
+        require(_feeRate.add(_plateformRate) < 10000, "Error Fees");
         WITHDRAW_FEE_RATE = _feeRate;
         PLATEFORM_FEE_RATE = _plateformRate;
         emit UpdateWithdrawFees(_feeRate, _plateformRate);
@@ -155,8 +155,12 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
         _userPool.userHolders[msg.sender] = _userPool.userHolders[msg.sender].sub(_dliTokens);
         
         _global.userGainPrincipals = _global.userGainPrincipals.add(_amount);
-        TransferHelper.safeTransfer(_vendorPools[_pid].global.ptoken, msg.sender, _amount);
-        emit UserRedeemMPool(msg.sender, _pid, _amount, _amount, _dliTokens);
+        
+        uint256 plateformAmount = _amount.mul(PLATEFORM_FEE_RATE).div(10000);
+        uint256 remainAmount = _amount.sub(plateformAmount);
+        TransferHelper.safeTransfer(_vendorPools[_pid].global.ptoken, fundAddr, plateformAmount);
+        TransferHelper.safeTransfer(_vendorPools[_pid].global.ptoken, msg.sender, remainAmount);
+        emit UserRedeemMPool(msg.sender, _pid, remainAmount, _amount, _dliTokens);
     }
     
     function userRedeem(bytes32 _pid, uint256 _amount) public {
@@ -176,19 +180,17 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
             GlobalInfo storage _global = _vendorPools[_pid].global;
             UserPool storage _userPool = _userPools[_pid];
             
-            uint256 feeAmount = userBenefits.mul(WITHDRAW_FEE_RATE).div(1000);
-            uint256 plateformAmount = userBenefits.mul(PLATEFORM_FEE_RATE).div(1000);
-            uint256 incomeAmount = userBenefits.sub(feeAmount).sub(plateformAmount);
-            
+            uint256 feeAmount = userBenefits.mul(WITHDRAW_FEE_RATE).div(10000);
+            uint256 incomeAmount = userBenefits.sub(feeAmount);
             
             _userPool.userMask[msg.sender] = _userPool.globalMask;
             _userPool.userRecvs[msg.sender] = 0;
-			_updateBenefitPool(_pid, feeAmount, 0);
+            _updateBenefitPool(_pid, feeAmount, 0);
             
             _global.userGainBenefits = _global.userGainBenefits.add(incomeAmount);
-            _global.plateformBenefits = _global.plateformBenefits.add(plateformAmount);
-            TransferHelper.safeTransfer(ifil, fundAddr, plateformAmount);
+            
             TransferHelper.safeTransfer(ifil, msg.sender, incomeAmount);
+            
             emit UserIncomeMPool(msg.sender, _pid, incomeAmount);
         }
     }

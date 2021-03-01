@@ -89,6 +89,13 @@ contract MasterMining is IMasterMiningStorage, Governance {
         totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint;
     }
+    
+        
+    //fix update bug
+    function updateData(uint256 _dmcPerBlock, uint256 _bonusEndBlock) public onlyGovernance {
+        dmcPerBlock = _dmcPerBlock;
+        bonusEndBlock = _bonusEndBlock;
+    }
 
     // Get mining total reward
     function getTotalReward(uint256 blockNum) public view returns (uint256) {

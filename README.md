@@ -15,4 +15,6 @@ TeamTimeLock  : https://hecoinfo.com/address/0xceb4273ace3685231f6aEc33e93C52b4d
 DMCToken  : https://hecoinfo.com/address/0x854Bb58fDDa85F20b5aB20B20d888f0554c02560
 MasterMining： https://hecoinfo.com/address/0x0db4a5379b67e46d3d78efab404cd24939866ce3
 MasterMiningProxy：  https://hecoinfo.com/address/0x9CBf674532e0873B439619B3ca9C8E32688E5a99
+DMEXJointMiningDmc:  https://hecoinfo.com/address/0xe44227975C95577Fc96BbCec21372116ef96E934
+DMEXJointMiningDmcProxy:  https://hecoinfo.com/address/0x66A40Dac4c59199671762865b8e430a37303132d
 ```

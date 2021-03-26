@@ -34,7 +34,6 @@ contract DMCToken is ERC20, Vistor{
 		    _amount = TOTAL_MINING.sub(currentMintAmount);
 		    tmp_amount = TOTAL_MINING;
 		}
-		require(tmp_amount <= TOTAL_MINING, "Exceeding the total amount of mining");
 		currentMintAmount = tmp_amount;
         _mint(_to, _amount);
     }

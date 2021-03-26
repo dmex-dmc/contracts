@@ -108,7 +108,7 @@ contract CloudMinerDex is Governance {
         pure
         returns (uint8, bytes32, bytes32)
     {
-        require(sig.length == 65, "Not Invalid Signature Data");
+        require(sig.length == 65, "Invalid Signature Data");
 
         bytes32 r;
         bytes32 s;

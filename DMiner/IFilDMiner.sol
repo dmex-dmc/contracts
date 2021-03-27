@@ -45,7 +45,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
     address public airdrop;
     bool public _initialize;
     
-    function initialize() public {
+    function initialize() external {
         require(!_initialize, "already initialized");
         _initialize = true;
         _governance = msg.sender;
@@ -53,12 +53,12 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         _uids[OFFICAL_UID] = fundAddr;
     }
     
-    function setAirdrop(address _addr) onlyGovernance public {
+    function setAirdrop(address _addr) onlyGovernance external {
         airdrop = _addr;
         emit ChangeAirdrop(_addr);
     }
     
-    function depositBenefits(uint256 _prodid, uint256 _effectPower, uint256 _mineBenefits) onlyVistor public {
+    function depositBenefits(uint256 _prodid, uint256 _effectPower, uint256 _mineBenefits) onlyVistor external {
         _safeTransferFrom(hfilToken, msg.sender, address(this), _mineBenefits);
         
         uint256 _dayTime = block.timestamp.div(DAYTIME).mul(DAYTIME);
@@ -68,7 +68,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         emit DepositBenefit(_prodid, _dayTime, _mineBenefits);
     }
     
-    function createNFT(bytes32 _inviterid, uint256 _prodid, uint256 _buyAmount, uint256 _payment) public {
+    function createNFT(bytes32 _inviterid, uint256 _prodid, uint256 _buyAmount, uint256 _payment) external {
         ProductInfo memory prod = dmexVendor.getProduct(_prodid);
         require(prod.prodType == 1, "Non-purchasable Product");
         if (prod.startTime > 0) {
@@ -112,7 +112,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         emit BuyIFilNFT(msg.sender, tokenid, _prodid, needPayAmount, _recvPower);
     }
     
-    function userRegister(bytes32 inviteCode) public {
+    function userRegister(bytes32 inviteCode) external {
         require(inviteCode != 0x0, "invalid inviteCode");
         require(_uids[inviteCode] == address(0), "The invitation code has been registered");
         require(_users[msg.sender].uid == 0x0, "The user has been registered");
@@ -121,7 +121,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         emit UserRegister(msg.sender, inviteCode);
     }
     
-    function recvAirdrop() public {
+    function recvAirdrop() external {
         (uint256 _prodid, uint256 _power) = IDMexAirdrop(airdrop).recvAirdrop(msg.sender);
         require(dmexVendor.getProduct(_prodid).prodType == 2, "Non-Airdrop Product");
         
@@ -139,7 +139,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         emit RecvAirdrop(msg.sender, tokenid, _prodid, _power);
     }
     
-    function withdrawBenefits() public {
+    function withdrawBenefits() external {
         uint256[] memory _tokens = cloudMiner.tokensOfOwner(msg.sender);
         if (_tokens.length <= 0) {
             return;
@@ -158,7 +158,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         emit Withdraw(msg.sender, totalBenefits);
     }
     
-    function withdrawBenefits(uint256[] memory _tokens) public {
+    function withdrawBenefits(uint256[] memory _tokens) external {
         uint256 totalBenefits = 0;
         for (uint256 i = 0; i < _tokens.length; i++) {
             require(cloudMiner.ownerOf(_tokens[i]) == msg.sender, "not owner withdraw");
@@ -176,16 +176,16 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
     
 
     
-    function getBenefitPool(uint256 _prodid, uint256 _poolid) public view returns(BenefitPool memory) {
+    function getBenefitPool(uint256 _prodid, uint256 _poolid) external view returns(BenefitPool memory) {
         return _beftPools[_prodid][_poolid];
     }
     
-    function getAndCheckRecvAirdrop(address owner) public view returns(bool, bool, uint256, uint256) {
+    function getAndCheckRecvAirdrop(address owner) external view returns(bool, bool, uint256, uint256) {
         (bool _available, bool _received, uint256 _power) = IDMexAirdrop(airdrop).checkAirdrop(owner);
         return (_available, _received, _power, IDMexAirdrop(airdrop).getAirdropEndTime());
     }
     
-    function getUserInfo(address owner) public view returns(BackUser memory) {
+    function getUserInfo(address owner) external view returns(BackUser memory) {
         uint256[] memory _tokens = cloudMiner.tokensOfOwner(owner);
         
         uint256 effectPower = 0;
@@ -217,17 +217,17 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         });
     }
     
-    function getInviter(bytes32 inviterid) public view returns(address) {
+    function getInviter(bytes32 inviterid) external view returns(address) {
         return _uids[inviterid];
     }
     
-    function getNFTInfo(uint256 tokenid) public view returns(IFilNFT memory, uint256, uint256) {
+    function getNFTInfo(uint256 tokenid) external view returns(IFilNFT memory, uint256, uint256) {
         IFilNFT memory nft = _ifilNfts[tokenid];
         (uint256 calcTotalBenefits, uint256 calcUnreleaseBenefits) = _calcNFTBenefits(tokenid);
         return (nft, calcTotalBenefits, calcUnreleaseBenefits);
     }
     
-    function getNFTInfos(uint256[] memory tokenids) public view returns(IFilNFT[] memory) {
+    function getNFTInfos(uint256[] memory tokenids) external view returns(IFilNFT[] memory) {
         IFilNFT[] memory nfts = new IFilNFT[](tokenids.length);
         for (uint256 i = 0; i< tokenids.length; i++) {
             nfts[i] = _ifilNfts[tokenids[i]];
@@ -235,7 +235,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
         return nfts;
     }
     
-    function getNFTPeriodBenefits(uint256 _tokenid, uint256 _startTime, uint256 _endTime) public view returns(uint256[] memory, uint256[] memory) {
+    function getNFTPeriodBenefits(uint256 _tokenid, uint256 _startTime, uint256 _endTime) external view returns(uint256[] memory, uint256[] memory) {
         _startTime = _startTime.div(DAYTIME).mul(DAYTIME);
         _endTime = _endTime.div(DAYTIME).mul(DAYTIME);
         

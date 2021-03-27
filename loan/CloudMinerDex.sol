@@ -75,10 +75,10 @@ contract CloudMinerDex is Governance {
         (FillOrder memory order, bytes32 txid) = assertTransaction(makerData);
         
         uint256 fees = order.txAmount.mul(feeRate).div(100);
+        _orderRecord[txid] = true;
         TransferHelper.safeTransferFrom(order.tokenAddr, msg.sender, fundAddr, fees);
         TransferHelper.safeTransferFrom(order.tokenAddr, msg.sender, order.makerAddr, order.txAmount.sub(fees));
         TransferHelper.safeTransferFrom(cloudMiner, order.makerAddr, msg.sender, order.nftid);
-        _orderRecord[txid] = true;
         emit TradeOrder(order.makerAddr, msg.sender, order.nftid, txid, order.tokenAddr, order.txAmount);
     }
     

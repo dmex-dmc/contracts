@@ -45,8 +45,8 @@ contract TeamTimeLock is Governance {
 	    uint256 totalReleases = _teamTotalUnlocks(msg.sender);
 	    if (totalReleases > teamRecvs[msg.sender]) {
 	        uint256 userRecvs = totalReleases.sub(teamRecvs[msg.sender]);
-	        _safeTransfer(dmcToken, msg.sender, userRecvs);
 	        teamRecvs[msg.sender] = totalReleases;
+	        _safeTransfer(dmcToken, msg.sender, userRecvs);
 	        emit TeamLockRecv(msg.sender, userRecvs);
 	    }
 	}

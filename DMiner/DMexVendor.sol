@@ -140,8 +140,8 @@ contract DMexVendor is IDMexVendor,Vistor {
         uint256 totalRedemptionAmount = _prodTimeLocks[_prodid].totalLocks.sub(_calcTotalRecv(_prodid));
         uint256 userRedemptionAmount = totalRedemptionAmount.mul(_prodTimeLocks[_prodid].userPowers[msg.sender]).div(_prods[_prodid].soldPower);
         
-        require(userRedemptionAmount >= 0, "redemption not now");
-        
+        _userRedemptions[_prodid][msg.sender] = true;
+          
         bytes memory returnData = usdt.functionCall(abi.encodeWithSelector(
             ERC20_TRANSFER_SELECTOR,
             msg.sender,
@@ -152,7 +152,7 @@ contract DMexVendor is IDMexVendor,Vistor {
             require(abi.decode(returnData, (bool)), "DMexVendor: ERC20 transfer did not succeed");
         }
         
-        _userRedemptions[_prodid][msg.sender] = true;
+      
         emit UserRedemption(msg.sender, _prodid, userRedemptionAmount);
     }
     

@@ -12,6 +12,8 @@ interface IDMexVendor is IDMexVendorStorage {
     event VendorWithdraw(address indexed user, uint256 prodid, uint256 amount);
     event UserRedemption(address indexed user, uint256 prodid, uint256 amount);
     event TransferProdRevenueReceiver(uint256 indexed prodid, address indexed user);
+    event UpdateProduct(uint256 prodid);
+    event TransferVendorAdmin(uint256 vendorid, address preAdmin, address newAdmin);
     
     function getVendor(uint256 _vendorid) external view returns(VendorInfo memory);
     

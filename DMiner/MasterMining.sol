@@ -38,6 +38,7 @@ contract MasterMining is IMasterMiningStorage, Governance {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event Add(address indexed lp, uint256 indexed pid, uint256 allocPoint);
+    event Set(uint256 indexed pid, uint256 allocPoint);
     
     function initialize(
             IDMCToken _dmc,
@@ -45,7 +46,7 @@ contract MasterMining is IMasterMiningStorage, Governance {
             uint256 _dmcPerBlock,
             uint256 _startBlock,
             uint256 _bonusEndBlock
-        ) public {
+        ) external {
         require(!_initialize, "already initialized");
         _initialize = true;
         _governance = msg.sender;
@@ -62,7 +63,8 @@ contract MasterMining is IMasterMiningStorage, Governance {
 
     // Add a new lp to the pool. Can only be called by the owner.
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyGovernance {
+    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) external onlyGovernance {
+        require(address(_lpToken) != address(0), "_lpToken is zero address");
         if (_withUpdate) {
             massUpdatePools();
         }
@@ -82,19 +84,13 @@ contract MasterMining is IMasterMiningStorage, Governance {
     }
 
     // Update the given pool's DMC allocation point. Can only be called by the owner.
-    function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyGovernance {
+    function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) external onlyGovernance {
         if (_withUpdate) {
             massUpdatePools();
         }
         totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint;
-    }
-    
-        
-    //fix update bug
-    function updateData(uint256 _dmcPerBlock, uint256 _bonusEndBlock) public onlyGovernance {
-        dmcPerBlock = _dmcPerBlock;
-        bonusEndBlock = _bonusEndBlock;
+        emit Set(_pid, _allocPoint);
     }
 
     // Get mining total reward
@@ -107,48 +103,48 @@ contract MasterMining is IMasterMiningStorage, Governance {
             blockNum = bonusEndBlock;
         }
         
-        if(blockNum < startBlock + first_3_days) {
-            return dmcFirstDaysPerBlock * (blockNum - startBlock);
+        if(blockNum < startBlock.add(first_3_days)) {
+            return dmcFirstDaysPerBlock.mul(blockNum.sub(startBlock));
         }
         
-        uint256 first_3_days_total = dmcFirstDaysPerBlock * first_3_days;
-        uint256 halveCycle = 180 * 24 * 60 * 20;        // 3 seconds one block, about 180 days, 5184000 blocks;
-        uint256 halveTimes = (blockNum - startBlock - first_3_days) / halveCycle;
+        uint256 first_3_days_total = dmcFirstDaysPerBlock.mul(first_3_days);
+        uint256 halveCycle = 5184000;        // 3 seconds one block, about 180 days, 5184000 blocks;
+        uint256 halveTimes = blockNum.sub(startBlock).sub(first_3_days).div(halveCycle);
         uint256 totalReward = first_3_days_total;
         uint256 currDmcPerBlock = dmcPerBlock;
         if( halveTimes > 0 ) {
             for(uint256 i=1; i<=halveTimes; ++i) {
-                totalReward += currDmcPerBlock * halveCycle;
+                totalReward = totalReward.add(currDmcPerBlock.mul(halveCycle));
                 currDmcPerBlock = currDmcPerBlock >> 1; 
             }
-            totalReward += (blockNum - startBlock - first_3_days - halveCycle * halveTimes) * currDmcPerBlock;
+            totalReward = totalReward.add((blockNum.sub(startBlock).sub(first_3_days).sub(halveCycle.mul(halveTimes))).mul(currDmcPerBlock));
             return totalReward;
         }
         else {
-            return first_3_days_total + dmcPerBlock * (blockNum - startBlock - first_3_days);
+            return first_3_days_total.add(dmcPerBlock.mul(blockNum.sub(startBlock).sub(first_3_days)));
         }
     }
     
     
     //halve block reward every six month
-    function getCurrentBlockReward() public view returns (uint256) {
+    function getCurrentBlockReward() external view returns (uint256) {
         if(block.number <= startBlock || block.number > bonusEndBlock) {
             return 0;
         }
         
-        if(block.number <= startBlock + first_3_days) {
+        if(block.number <= startBlock.add(first_3_days)) {
             return dmcFirstDaysPerBlock;
         }
         
-        uint256 halveCycle = 180 * 24 * 60 * 20;        // 3 seconds one block, about 180 days, 5184000 blocks;
-        uint256 halveTimes = (block.number - startBlock - first_3_days) / halveCycle;
+        uint256 halveCycle = 5184000;        // 3 seconds one block, about 180 days, 5184000 blocks;
+        uint256 halveTimes = (block.number.sub(startBlock).sub(first_3_days)).div(halveCycle);
         return dmcPerBlock >> halveTimes;         
 
     }
     
     
     function getDifferBlockReward(uint256 _from, uint256 _to) public view returns (uint256) {
-        return getTotalReward(_to) - getTotalReward(_from);   
+        return getTotalReward(_to).sub(getTotalReward(_from));   
     }
     
 
@@ -209,7 +205,7 @@ contract MasterMining is IMasterMiningStorage, Governance {
     }
 
     // Deposit LP tokens to Mining Pool for DMC allocation.
-    function deposit(uint256 _pid, uint256 _amount) public {
+    function deposit(uint256 _pid, uint256 _amount) external {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
@@ -301,28 +297,29 @@ contract MasterMining is IMasterMiningStorage, Governance {
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(uint256 _pid) public {
+    function emergencyWithdraw(uint256 _pid) external {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
-        pool.lpToken.safeTransfer(address(msg.sender), user.amount);
         pool.totalToken = pool.totalToken.sub(user.amount);
-        emit EmergencyWithdraw(msg.sender, _pid, user.amount);
+        uint256 amount = user.amount;
         user.amount = 0;
         user.rewardDebt = 0;
+        pool.lpToken.safeTransfer(address(msg.sender), amount);
+        emit EmergencyWithdraw(msg.sender, _pid, amount);
     }
 
     // Safe dmc transfer function, just in case if rounding error causes pool to not have enough DMC.
     function safeDmcTransfer(address _to, uint256 _amount) internal {
         uint256 dmcBal = dmc.balanceOf(address(this));
         if (_amount > dmcBal) {
-            dmc.transfer(_to, dmcBal);
+            require(dmc.transfer(_to, dmcBal), "MasterMining: dmc transfer fail!");
         } else {
-            dmc.transfer(_to, _amount);
+            require(dmc.transfer(_to, _amount), "MasterMining: dmc transfer fail!");
         }
     }
     
     //Get the total amount of user pledge 
-    function getPledgeAmount(address _lpToken, address _user) public view returns (uint256 amount) {
+    function getPledgeAmount(address _lpToken, address _user) external view returns (uint256 amount) {
         uint256 length = poolInfo.length;
         for (uint256 pid = 0; pid < length; ++pid) {
             PoolInfo storage pool = poolInfo[pid];
@@ -332,17 +329,6 @@ contract MasterMining is IMasterMiningStorage, Governance {
             }
         }
         return amount;
-    }
-    
-    //Get the total alloc point of some pools
-    function sumPoolAllocPoint(uint256[] memory _pids) public view returns (uint256 _subAllocPoint, uint256 _totalAllocPoint){
-        uint256 length = _pids.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
-            PoolInfo storage pool = poolInfo[_pids[pid]];
-            _subAllocPoint = _subAllocPoint.add(pool.allocPoint);
-        }
-        
-        return (_subAllocPoint, totalAllocPoint);
     }
 
 }

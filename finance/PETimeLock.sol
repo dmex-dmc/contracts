@@ -45,8 +45,8 @@ contract PETimeLock is Governance {
 	    uint256 totalReleases = _peTotalUnlocks(msg.sender);
 	    if (totalReleases > peRecvs[msg.sender]) {
 	        uint256 userRecvs = totalReleases.sub(peRecvs[msg.sender]);
-	        _safeTransfer(dmcToken, msg.sender, userRecvs);
 	        peRecvs[msg.sender] = totalReleases;
+	        _safeTransfer(dmcToken, msg.sender, userRecvs);
 	        emit PELockRecv(msg.sender, userRecvs);
 	    }
 	}

@@ -230,11 +230,13 @@ contract DMEXJointMiningDmc is DMEXJointMiningDmcStorage,Vistor {
             } else {
                 withdrawAmount = canRecvAmount;
             }
+            _vendorPools[_pid].global.vendorGains += withdrawAmount;
+	    
             DFinanceToken(afil).burn(msg.sender, withdrawAmount);
             
             TransferHelper.safeTransfer(_vendorPools[_pid].global.ptoken, msg.sender, withdrawAmount);
             
-            _vendorPools[_pid].global.vendorGains += withdrawAmount;
+
             emit VendorWithdrawMPool(msg.sender, _pid, withdrawAmount);
         }
     }

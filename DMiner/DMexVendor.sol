@@ -140,6 +140,8 @@ contract DMexVendor is IDMexVendor,Vistor {
         uint256 totalRedemptionAmount = _prodTimeLocks[_prodid].totalLocks.sub(_calcTotalRecv(_prodid));
         uint256 userRedemptionAmount = totalRedemptionAmount.mul(_prodTimeLocks[_prodid].userPowers[msg.sender]).div(_prods[_prodid].soldPower);
         
+        require(userRedemptionAmount >= 0, "redemption not now");
+        
         bytes memory returnData = usdt.functionCall(abi.encodeWithSelector(
             ERC20_TRANSFER_SELECTOR,
             msg.sender,

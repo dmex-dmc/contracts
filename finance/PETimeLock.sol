@@ -26,7 +26,7 @@ contract PETimeLock is Governance {
     bytes4 private constant ERC20_TRANSFER_SELECTOR = bytes4(keccak256("transfer(address,uint256)"));
     
 	function startTimeLock(address _dmcToken) onlyGovernance external {
-	    require(dmcToken == address(0), "Error State");
+	    require(_dmcToken != address(0), "PETimeLock: _dmcToken is zero address");
 	    dmcToken = _dmcToken;
 	    startBlock = block.number;
 	    emit StartTimeLock(startBlock, dmcToken);

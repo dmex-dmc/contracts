@@ -175,7 +175,7 @@ contract DMEXFinance is DMEXFinanceStorage, Vistor {
     		if (diffDay > _pfinances[nextid].lockDay) {
     		    diffDay = _pfinances[nextid].lockDay;
     		}
-    		totalRelease += _pfinances[nextid].famount.mul(diffDay).div(_pfinances[nextid].lockDay).mul(15).div(100);
+		totalRelease += _pfinances[nextid].famount.mul(diffDay).mul(15).div(_pfinances[nextid].lockDay).div(100);
     		nextid = _pfinances[nextid].previd;
         }
         return totalRelease;

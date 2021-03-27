@@ -69,6 +69,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
     }
     
     function createNFT(bytes32 _inviterid, uint256 _prodid, uint256 _buyAmount, uint256 _payment) external {
+    	require(_buyAmount > 0 && _payment > 0, "parameter error");
         ProductInfo memory prod = dmexVendor.getProduct(_prodid);
         require(prod.prodType == 1, "Non-purchasable Product");
         if (prod.startTime > 0) {
@@ -122,8 +123,9 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
     }
     
     function recvAirdrop() external {
-        (uint256 _prodid, uint256 _power) = IDMexAirdrop(airdrop).recvAirdrop(msg.sender);
         require(dmexVendor.getProduct(_prodid).prodType == 2, "Non-Airdrop Product");
+        (uint256 _prodid, uint256 _power) = IDMexAirdrop(airdrop).recvAirdrop(msg.sender);
+
         
         uint256 curDayTime = block.timestamp.div(DAYTIME).mul(DAYTIME);
 		

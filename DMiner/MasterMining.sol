@@ -46,7 +46,7 @@ contract MasterMining is IMasterMiningStorage, Governance {
             uint256 _startBlock,
             uint256 _bonusEndBlock
         ) public {
-        require(_initialize == false, "already initialized");
+        require(!_initialize, "already initialized");
         _initialize = true;
         _governance = msg.sender;
         dmc = _dmc;

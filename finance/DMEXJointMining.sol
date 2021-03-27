@@ -35,7 +35,7 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
     bool public _initialize;
     
     function initialize() public {
-        require(_initialize == false, "already initialized");
+        require(!_initialize, "already initialized");
         _initialize = true;
         _governance = msg.sender;
         WITHDRAW_FEE_RATE = 3;
@@ -55,7 +55,7 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
     
     function createMiningPool(uint256 _vendorid, address _payToken) onlyVistor public {
         bytes32 pid = keccak256(abi.encodePacked(_vendorid, _payToken));
-        require(_vendorPools[pid].global.active == false, "MiningPool Exists!");
+        require(!_vendorPools[pid].global.active, "MiningPool Exists!");
         _vendorPools[pid].global.ptoken = _payToken;
         _vendorPools[pid].global.active = true;
         _vendorPools[pid].global.afil = _createToken("AFIL TOKEN", "AFIL", DFinanceToken(_payToken).decimals(), true);
@@ -85,7 +85,7 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
     
     function vendorDepositBenefits(bytes32 _pid, uint256 _fundAmount, uint256 _principalAmount, uint256 _incomeAmount, uint256 _incomeValut) onlyVistor public {
         uint256 dayTime = block.timestamp.div(DAYTIME).mul(DAYTIME);
-        require(_vendorPools[_pid].depositRecords[dayTime] == false, "today has been deposit benefits");
+        require(!_vendorPools[_pid].depositRecords[dayTime], "today has been deposit benefits");
         require(_fundAmount > 0 && _principalAmount > 0 && _incomeAmount > 0 && _incomeValut > 0, "Error Release!");
         
         TransferHelper.safeTransferFrom(_vendorPools[_pid].global.ptoken, msg.sender, address(this), _principalAmount);

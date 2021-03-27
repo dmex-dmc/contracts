@@ -214,10 +214,10 @@ contract MasterMining is IMasterMiningStorage, Governance {
             pool.withdrawReward = pool.withdrawReward.add(pending);
             safeDmcTransfer(msg.sender, pending);
         }
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
         pool.totalToken = pool.totalToken.add(_amount);
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accDmcPerShare).div(1e12);
+        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
         emit Deposit(msg.sender, _pid, _amount);
     }
 
@@ -229,10 +229,11 @@ contract MasterMining is IMasterMiningStorage, Governance {
         updatePool(_pid);
         uint256 pending = user.amount.mul(pool.accDmcPerShare).div(1e12).sub(user.rewardDebt);
         pool.withdrawReward = pool.withdrawReward.add(pending);
-        safeDmcTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
         pool.totalToken = pool.totalToken.sub(_amount);
         user.rewardDebt = user.amount.mul(pool.accDmcPerShare).div(1e12);
+        safeDmcTransfer(msg.sender, pending);
+
         pool.lpToken.safeTransfer(address(msg.sender), _amount);
         emit Withdraw(msg.sender, _pid, _amount);
     }

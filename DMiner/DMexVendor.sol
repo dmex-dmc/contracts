@@ -57,6 +57,7 @@ contract DMexVendor is IDMexVendor,Vistor {
         _prods[_prodid].price = _product.price;
         _prods[_prodid].effectPeriod = _product.effectPeriod;
         _prods[_prodid].activePeriod = _product.activePeriod;
+        emit UpdateProduct(_prodid);
     }
     
     function transferVendorAdmin(uint256 _vendorid, address _to) external {
@@ -64,6 +65,7 @@ contract DMexVendor is IDMexVendor,Vistor {
         require(_vendors[_vendorid].state == VendorState.NORMAL, "Vendor is disabled");
         
         _vendors[_vendorid].admin = _to;
+        emit TransferVendorAdmin(_vendorid, msg.sender, _to);
     }
     
     function transferProdRevenueReceiver(uint256 _prodid, address _to) external {
@@ -91,6 +93,7 @@ contract DMexVendor is IDMexVendor,Vistor {
     function initVendor(uint256 _vendorid) external onlyGovernance{
         _vendors[_vendorid].disableTime = 0;
         _vendors[_vendorid].state = VendorState.NORMAL;
+        emit InitVendor(_vendorid);
     }
     
     function addCapacity(uint256 _prodid, uint256 capacity) public {

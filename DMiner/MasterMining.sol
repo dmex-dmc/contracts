@@ -302,6 +302,7 @@ contract MasterMining is IMasterMiningStorage, Governance {
         UserInfo storage user = userInfo[_pid][msg.sender];
         pool.totalToken = pool.totalToken.sub(user.amount);
         uint256 amount = user.amount;
+        require(amount >= 0, "emergencyWithdraw: not good");
         user.amount = 0;
         user.rewardDebt = 0;
         pool.lpToken.safeTransfer(address(msg.sender), amount);

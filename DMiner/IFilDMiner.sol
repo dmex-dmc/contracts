@@ -46,7 +46,7 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
     bool public _initialize;
     
     function initialize() public {
-        require(_initialize == false, "already initialized");
+        require(!_initialize, "already initialized");
         _initialize = true;
         _governance = msg.sender;
         _users[fundAddr].uid = OFFICAL_UID;

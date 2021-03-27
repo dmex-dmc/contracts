@@ -209,6 +209,7 @@ contract DMEXJointMining is DMEXJointMiningStorage,Vistor {
     
     function vendorWithdraw(bytes32 _pid, uint256 _amount) public {
         require(_vendorPools[_pid].global.active, "pool not exists");
+	require(_amount > 0, "DMEXJointMining: withdraw 0 amount!");
         uint256 canRecvAmount = _calcVendorCanRecvs(_pid);
         address afil = _vendorPools[_pid].global.afil;
         uint256 afilAmount = DFinanceToken(afil).balanceOf(msg.sender);

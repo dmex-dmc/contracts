@@ -89,7 +89,7 @@ contract CloudMinerDex is Governance {
         (FillOrder memory order, bytes memory signature) = abi.decode(makerData, (FillOrder, bytes));
         
         bytes32 txid = keccak256(abi.encodePacked(signature));
-        require(_orderRecord[txid] == false, "order exists!");
+        require(!_orderRecord[txid], "order exists!");
         require(block.timestamp < order.expireTime, "order expire!");
         require(IERC721(cloudMiner).ownerOf(order.nftid) == order.makerAddr, "maker not NFT owner");
         

@@ -176,8 +176,8 @@ contract IFilDMiner is IFilDMinerStorage,IDMexVendorStorage,Vistor {
     
 
     
-    function getBenefitPool(uint256 _prodid, uint256 _poolid) external view returns(BenefitPool memory) {
-        return _beftPools[_prodid][_poolid];
+    function getBenefitPool(uint256 _prodid, uint256 _dayTime) external view returns(BenefitPool memory) {
+        return _beftPools[_prodid][_dayTime];
     }
     
     function getAndCheckRecvAirdrop(address owner) external view returns(bool, bool, uint256, uint256) {

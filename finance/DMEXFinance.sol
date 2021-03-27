@@ -18,7 +18,6 @@ contract DMEXFinance is DMEXFinanceStorage, Vistor {
     event VendorDepositABS(address indexed user, uint256 indexed prodid, uint256 amount);
     event VendorWithdrawABS(address indexed user, uint256 indexed prodid, uint256 amount);
     
-    bytes4 private constant ERC20_APPROVE_SELECTOR = bytes4(keccak256("approve(address,uint256)"));
     
     address private constant usdt = 0x93E3f452fBa08d9bB44D16F559AD9a9dF7153E2B;
     

@@ -328,6 +328,7 @@ contract MasterMining is IMasterMiningStorage, Governance {
             if(address(pool.lpToken) == _lpToken) {
                 UserInfo storage user = userInfo[pid][_user];
                 amount = amount.add(user.amount);
+                break;
             }
         }
         return amount;

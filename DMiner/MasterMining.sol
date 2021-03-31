@@ -336,18 +336,17 @@ contract MasterMining is IMasterMiningStorage, Governance {
         return amount;
     }
     //Get the total alloc point of some pools
-    function sumPoolAllocPoint(uint256[] memory _pids) public view returns (uint256 _subAllocPoint, uint256 _totalAllocPoint){
+    function sumPoolAllocPoint(uint256[] memory _pids) public view returns (uint256 _subAllocPoint){
         uint256 length = _pids.length;
         for (uint256 pid = 0; pid < length; ++pid) {
             PoolInfo storage pool = poolInfo[_pids[pid]];
             _subAllocPoint = _subAllocPoint.add(pool.allocPoint);
         }
         
-        return (_subAllocPoint, totalAllocPoint);
+        return _subAllocPoint;
     }
 
-    function checkExistsLpTokenInPool(address _lpToken) public view returns(bool) {
-        bool existsLpToken = false;
+    function checkExistsLpTokenInPool(address _lpToken) public view returns(bool existsLpToken) {
          uint256 length = poolInfo.length;
         for (uint256 pid = 0; pid < length; ++pid) {
             PoolInfo memory pool = poolInfo[pid];

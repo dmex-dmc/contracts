@@ -65,6 +65,8 @@ contract MasterMining is IMasterMiningStorage, Governance {
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) external onlyGovernance {
         require(address(_lpToken) != address(0), "_lpToken is zero address");
+        bool existsLpTokenInPool = checkExistsLpTokenInPool(address(_lpToken));
+        require(!existsLpTokenInPool,"DO NOT add the same LP token.");
         if (_withUpdate) {
             massUpdatePools();
         }
@@ -333,5 +335,28 @@ contract MasterMining is IMasterMiningStorage, Governance {
         }
         return amount;
     }
+    //Get the total alloc point of some pools
+    function sumPoolAllocPoint(uint256[] memory _pids) public view returns (uint256 _subAllocPoint, uint256 _totalAllocPoint){
+        uint256 length = _pids.length;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            PoolInfo storage pool = poolInfo[_pids[pid]];
+            _subAllocPoint = _subAllocPoint.add(pool.allocPoint);
+        }
+        
+        return (_subAllocPoint, totalAllocPoint);
+    }
 
+    function checkExistsLpTokenInPool(address _lpToken) public view returns(bool) {
+        bool existsLpToken = false;
+         uint256 length = poolInfo.length;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            PoolInfo memory pool = poolInfo[pid];
+            if(address(pool.lpToken) == _lpToken) {
+                existsLpToken = true;
+                break;
+            }
+        }
+        
+        return existsLpToken;
+    }
 }

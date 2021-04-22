@@ -2,6 +2,7 @@
 
 ### Heco
 ```
+V1:
 CloudMiner  : https://hecoinfo.com/address/0x7DDA78646ac44B2b1EB9B67aA74b0EbcdA1839e0
 CloudMinerDex  : https://hecoinfo.com/address/0x8Ff9eaabdF9424fC17934bf186fabb9fcE303730
 DMexVendor  : https://hecoinfo.com/address/0x4bbC7Fe0bD1F74dB65FaBfcAb68f3520238B3396
@@ -17,4 +18,11 @@ MasterMining： https://hecoinfo.com/address/0x0db4a5379b67e46d3d78efab404cd2493
 MasterMiningProxy：  https://hecoinfo.com/address/0x9CBf674532e0873B439619B3ca9C8E32688E5a99
 DMEXJointMiningDmc:  https://hecoinfo.com/address/0xe44227975C95577Fc96BbCec21372116ef96E934
 DMEXJointMiningDmcProxy:  https://hecoinfo.com/address/0x66A40Dac4c59199671762865b8e430a37303132d
+
+V2:
+CloudMiner  : https://hecoinfo.com/address/0x36Ca8Eaf6Eaa1c4fA1c5FC62bF0b8Acd45eF55EC
+DMexVendorV2  : https://hecoinfo.com/address/0x3D98FB4Fdf1E83E6C05c4c49088c82b359BF4d89
+DMexVendorV2Proxy  : https://hecoinfo.com/address/0x0FB8d08a7E3090c1F1B6cDd55D345024605e0F26
+IFilDMinerV2  : https://hecoinfo.com/address/0x6A233B4f1b45325fb0Fed4Ba914e121BaB22fbfA
+IFilDMinerV2Proxy  : https://hecoinfo.com/address/0xd20B8D9bD466403853A888ceCabdEbD0A9232F93
 ```

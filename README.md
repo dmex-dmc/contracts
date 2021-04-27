@@ -23,6 +23,9 @@ V2:
 CloudMiner  : https://hecoinfo.com/address/0x36Ca8Eaf6Eaa1c4fA1c5FC62bF0b8Acd45eF55EC
 DMexVendorV2  : https://hecoinfo.com/address/0x3D98FB4Fdf1E83E6C05c4c49088c82b359BF4d89
 DMexVendorV2Proxy  : https://hecoinfo.com/address/0x0FB8d08a7E3090c1F1B6cDd55D345024605e0F26
-IFilDMinerV2  : https://hecoinfo.com/address/0x6A233B4f1b45325fb0Fed4Ba914e121BaB22fbfA
+IFilDMinerV2  : https://hecoinfo.com/address/0x4dBeF95c8632442Ce9E5035fB26256659D8EcBD4
 IFilDMinerV2Proxy  : https://hecoinfo.com/address/0xd20B8D9bD466403853A888ceCabdEbD0A9232F93
+
+V2.1:
+IXCHToken: https://hecoinfo.com/address/0xFb37dbc6d79E9cB3769C3F83837FbC0277253c95
 ```

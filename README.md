@@ -28,4 +28,5 @@ IFilDMinerV2Proxy  : https://hecoinfo.com/address/0xd20B8D9bD466403853A888ceCabd
 
 V2.1:
 IXCHToken: https://hecoinfo.com/address/0xFb37dbc6d79E9cB3769C3F83837FbC0277253c95
+TokenSwap: https://hecoinfo.com/address/0xb81C88be2c14E16F5b8db2040b355a4714BEf971
 ```

@@ -1,6 +1,6 @@
 # Dmex Contract
 
-### Heco
+### HECO
 ```
 V1:
 CloudMiner  : https://hecoinfo.com/address/0x7DDA78646ac44B2b1EB9B67aA74b0EbcdA1839e0
@@ -73,7 +73,7 @@ IFilDMinerV4Proxy: https://hecoinfo.com/address/0xA25d7d73859B87811aAA90Ca69446F
 
 ```
 
-### Bsc
+### BSC
 ```
 V1
 DMCToken: https://bscscan.com/address/0xa5342D72D04c133180f376753f90a4B2eEe29bB3
